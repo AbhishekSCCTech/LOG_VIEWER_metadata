@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Viewer Dashboard</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        #details { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h2>📁 Log Summary (Grouped by Filename)</h2>
+    <table>
+        <tr>
+            <th>Filename</th>
+            <th>Verbose</th>
+            <th>Debug</th>
+            <th>Information</th>
+            <th>Warning</th>
+            <th>Error</th>
+            <th>Fatal</th>
+        </tr>
+        {% for row in summary %}
+        <tr>
+            <td>{{ row.filename }}</td>
+            {% for level in ['Verbose', 'Debug', 'Information', 'Warning', 'Error', 'Fatal'] %}
+            <td>
+                <a href="#" onclick="loadDetails('{{ row.filename }}', '{{ level }}')">
+                    {{ row[level] }}
+                </a>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="details">
+        <h3>📝 Log Details</h3>
+        <div id="logEntries">Click any count to view logs here...</div>
+    </div>
+
+    <script>
+        function loadDetails(filename, level) {
+            fetch(`/details?filename=${filename}&level=${level}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = `<h4>${level} logs for file: ${filename}</h4>`;
+                    if (data.length === 0) {
+                        html += "<p>No logs found.</p>";
+                    } else {
+                        html += "<ul>";
+                        data.forEach(log => {
+                            html += `<li>${log.date} ${log.time} - ${log.message}</li>`;
+                        });
+                        html += "</ul>";
+                    }
+                    document.getElementById("logEntries").innerHTML = html;
+                });
+        }
+    </script>
+</body>
+</html>
