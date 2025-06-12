@@ -15,7 +15,7 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM log_Tekla_Table LIMIT 200")
+    cursor.execute("SELECT * FROM log_Tekla_Table LIMIT 1000")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
