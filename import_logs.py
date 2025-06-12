@@ -4,9 +4,6 @@ import time
 import os
 
 def safe_open(filepath, retries=5, delay=1):
-    """
-    Try opening the file multiple times, in case Windows has locked it.
-    """
     for attempt in range(retries):
         try:
             return open(filepath, "r", encoding="utf-8")
